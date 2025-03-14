@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Photo to Video Converter</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            margin: 50px auto;
+            width: 80%;
+            max-width: 800px;
+        }
+        input, select, button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+        video {
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Photo to Video Converter</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <select id="videoFormat">
+            <option value="mp4">MP4</option>
+            <option value="mov">MOV</option>
+            <option value="avi">AVI</option>
+            <option value="webm">WebM</option>
+        </select>
+        <button onclick="convertToVideo()">Convert</button>
+        <video id="outputVideo" controls></video>
+        <a id="downloadLink" style="display: none;" download="output.mp4">Download Video</a>
+    </div>
+    <script>
+        function convertToVideo() {
+            let imageInput = document.getElementById("imageInput");
+            let videoFormat = document.getElementById("videoFormat").value;
+            let outputVideo = document.getElementById("outputVideo");
+            let downloadLink = document.getElementById("downloadLink");
+
+            if (imageInput.files.length === 0) {
+                alert("Please upload an image.");
+                return;
+            }
+            
+            let file = imageInput.files[0];
+            let url = URL.createObjectURL(file);
+            
+            let canvas = document.createElement("canvas");
+            let ctx = canvas.getContext("2d");
+            let img = new Image();
+            img.src = url;
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                
+                let videoBlob = new Blob([canvas.toDataURL("image/png")], { type: "video/" + videoFormat });
+                let videoUrl = URL.createObjectURL(videoBlob);
+                outputVideo.src = videoUrl;
+                downloadLink.href = videoUrl;
+                downloadLink.style.display = "block";
+            };
+        }
+    </script>
+</body>
+</html>
